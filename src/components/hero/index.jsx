@@ -3,6 +3,11 @@ import {rows} from "../../data/data.js"
 import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
 import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline"
 
+import Fab from '@mui/material/Fab';
+import AddIcon from '@mui/icons-material/Add';
+
+
+
 const Hero = () => {
 
     const columns = [
@@ -84,6 +89,12 @@ const Hero = () => {
                         getRowId={(row) => row._id}
                     />
                 </div>  
+
+                <div className="fixed bottom-20 right-12  z-80">
+                    <Fab color="primary" aria-label="add" >
+                        <AddIcon />
+                    </Fab>
+                </div>
 
             </div>
         </div>

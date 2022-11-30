@@ -1,14 +1,39 @@
+import {useState} from "react";
 import { DataGrid } from "@mui/x-data-grid";
 import {rows} from "../../data/data.js"
 import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
 import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline"
-
 import Fab from '@mui/material/Fab';
 import AddIcon from '@mui/icons-material/Add';
 
+import Modal from  "../modal/"
 
 
 const Hero = () => {
+    const [notes, setNotes] = useState([])
+    const [title, setTitle] = useState("")
+    const [details, setDetails] = useState("")
+    const [addModal, setAddModal] = useState(false)
+
+
+
+    const addNote = (e) => {
+        e.preventDefault();
+        console.log(title)
+        console.log(details)
+    }
+
+    const titleChange = (e) => {
+        setTitle(e.target.value)
+    }
+
+    const detailChange = (e) => {
+        setDetails(e.target.value)
+    }
+
+    const handleAddModal = () => {setAddModal(!addModal)}
+
+
 
     const columns = [
         { field: "_id", headerName: "ID", width: 70 },
@@ -91,10 +116,21 @@ const Hero = () => {
                 </div>  
 
                 <div className="fixed bottom-20 right-12  z-80">
-                    <Fab color="primary" aria-label="add" >
+                    <Fab onClick={() => handleAddModal()} color="primary" aria-label="add" >
                         <AddIcon />
                     </Fab>
                 </div>
+
+                {addModal ? 
+                    <Modal 
+                        handleAddModal={handleAddModal}
+                        addNote={addNote}
+                        title={title}
+                        details={details}
+                        titleChange={titleChange}
+                        detailChange={detailChange}
+                    />
+                : null}
 
             </div>
         </div>

@@ -1,7 +1,10 @@
+import Home from "./screens/home.jsx"
 
 function App() {
   return (
-    <div>Happy coding</div>
+    <div>
+      <Home />
+    </div>
   );
 }
 

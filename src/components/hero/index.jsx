@@ -10,28 +10,33 @@ import Modal from  "../modal/"
 
 
 const Hero = () => {
-    const [notes, setNotes] = useState([])
     const [title, setTitle] = useState("")
     const [details, setDetails] = useState("")
     const [addModal, setAddModal] = useState(false)
+    const [updateModal, setUpdateModal] = useState(null)
+    const [viewModal, setViewModal] = useState(null)
 
-
+    const titleChange = (e) => {setTitle(e.target.value)}
+    const detailChange = (e) => {setDetails(e.target.value)}
+    const handleAddModal = () => {setAddModal(!addModal)}
+    const handleUpdateModal= () => {setUpdateModal(!updateModal)}
+    const handleViewModal= () => {setViewModal(!viewModal)}
 
     const addNote = (e) => {
         e.preventDefault();
         console.log(title)
         console.log(details)
+        setTitle("");
+        setDetails("")
     }
 
-    const titleChange = (e) => {
-        setTitle(e.target.value)
+    const updateNote = (e) => {
+        e.preventDefault();
+        console.log(title)
+        console.log(details)
+        setTitle("");
+        setDetails("")
     }
-
-    const detailChange = (e) => {
-        setDetails(e.target.value)
-    }
-
-    const handleAddModal = () => {setAddModal(!addModal)}
 
 
 
@@ -43,9 +48,7 @@ const Hero = () => {
             width: 150,
             renderCell: (params) => {
               return (
-                <div 
-                    className="text-sky-600 underline cursor-pointer "
-                >
+                <div onClick={ ()=> setViewModal(params.row._id,) } className="text-sky-600 underline cursor-pointer ">
                   {params.row.title}
                 </div>
               )
@@ -72,9 +75,7 @@ const Hero = () => {
             width: 150,
             renderCell: (params) => {
                 return (
-                    <div
-                        className="text-green-700 cursor-pointer "
-                    >
+                    <div onClick={ ()=> setUpdateModal(params.row._id,) } className="text-green-700 cursor-pointer ">
                         <EditOutlinedIcon />
                     </div>
               );
@@ -86,9 +87,7 @@ const Hero = () => {
             width: 150,
             renderCell: (params) => {
                 return (
-                    <div 
-                        className=" text-red-400 cursor-pointer "
-                    >
+                    <div className=" text-red-400 cursor-pointer ">
                         <DeleteOutlineIcon />
                     </div>
                 );
@@ -123,7 +122,8 @@ const Hero = () => {
 
                 {addModal ? 
                     <Modal 
-                        handleAddModal={handleAddModal}
+                        type="add"
+                        handleClose={handleAddModal}
                         addNote={addNote}
                         title={title}
                         details={details}
@@ -131,6 +131,36 @@ const Hero = () => {
                         detailChange={detailChange}
                     />
                 : null}
+
+
+                {
+                    rows.map((row, id) => (
+                        <>
+                            {viewModal === row._id ? 
+                                <Modal 
+                                    key={id}
+                                    handleClose={handleViewModal}
+                                    type="view"
+                                    row={row}
+                                />
+                            : null}
+
+                            {updateModal === row._id ? 
+                                <Modal 
+                                    key={id}
+                                    handleClose={handleUpdateModal}
+                                    type="update"
+                                    row={row}
+                                    title={title}
+                                    details={details}
+                                    titleChange={titleChange}
+                                    detailChange={detailChange}
+                                    updateNote={updateNote}
+                                />
+                            : null}
+                        </>
+                    ))
+                }
 
             </div>
         </div>

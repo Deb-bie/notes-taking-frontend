@@ -1,4 +1,5 @@
-import {useState} from "react";
+import {useState, useEffect} from "react";
+import axios from "axios";
 import { DataGrid } from "@mui/x-data-grid";
 import {rows} from "../../data/data.js"
 import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
@@ -10,6 +11,9 @@ import Modal from  "../modal/"
 
 
 const Hero = () => {
+    const [notes, setNotes] = useState("")
+
+
     const [title, setTitle] = useState("")
     const [details, setDetails] = useState("")
     const [addModal, setAddModal] = useState(false)
@@ -24,14 +28,21 @@ const Hero = () => {
 
     const addNote = (e) => {
         e.preventDefault();
-        console.log(title)
-        console.log(details)
+
+        axios.post( "http://localhost:3333", 
+            {
+                title: title,
+                details: details
+            } 
+        );
         setTitle("");
         setDetails("")
     }
 
-    const updateNote = (e) => {
+    const updateNote = (id) => {
         e.preventDefault();
+
+        
         console.log(title)
         console.log(details)
         setTitle("");

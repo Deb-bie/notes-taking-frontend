@@ -1,7 +1,6 @@
 import {useState, useEffect} from "react";
 import axios from "axios";
 import { DataGrid } from "@mui/x-data-grid";
-import {rows} from "../../data/data.js"
 import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
 import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline"
 import Fab from '@mui/material/Fab';
@@ -11,9 +10,7 @@ import Modal from  "../modal/"
 
 
 const Hero = () => {
-    const [notes, setNotes] = useState("")
-
-
+    const [notes, setNotes] = useState([])
     const [title, setTitle] = useState("")
     const [details, setDetails] = useState("")
     const [addModal, setAddModal] = useState(false)
@@ -28,60 +25,58 @@ const Hero = () => {
 
     const addNote = (e) => {
         e.preventDefault();
-        axios.post( "http://localhost:3333", 
-            {
-                title: title,
-                details: details
-            } 
+        axios.post( "https://notes-api-dzsi.onrender.com/", 
+            { title: title, details: details} 
         );
-        setTitle("");
-        setDetails("")
-    }
-
-    const updateNote = (e) => {
-        e.preventDefault();
-
-
-        console.log(title)
-        console.log(details)
         setTitle("");
         setDetails("")
     }
 
     useEffect(() => {
         const fetchNotes = async () => {
-          const result = await axios.get("http://localhost:3333");
+          const result = await axios.get("https://notes-api-dzsi.onrender.com/");
           setNotes(result.data);
         };
-  
         fetchNotes();
-      }, [notes]);
+    }, [notes]);
 
+    const openUpdate = async (id) => {
+        setUpdateModal(id)
+    }
+
+    const updateNote = async (id) => {
+        axios.put( `https://notes-api-dzsi.onrender.com/${id}`, 
+            { title: title, details: details } 
+        )
+        setTitle("");
+        setDetails("")
+        handleUpdateModal()
+    };
+
+
+    const getOneNote = async (id) => {
+        await axios.get(`https://notes-api-dzsi.onrender.com//${id}`)
+        setViewModal(id)
+    }
+
+    const deleteNote = async (id) => {
+        await axios.delete(`https://notes-api-dzsi.onrender.com//${id}`)
+    }
 
 
     const columns = [
-        { field: "_id", headerName: "ID", width: 70 },
-        {
-            field: "title",
-            headerName: "Title",
-            width: 150,
+        { field: "_id", headerName: "ID", width: 70},
+        { field: "title", headerName: "Title", width: 150,
             renderCell: (params) => {
               return (
-                <div onClick={ ()=> setViewModal(params.row._id,) } className="text-sky-600 underline cursor-pointer ">
+                <div onClick={()=>getOneNote(params.row._id)} className="text-sky-600 underline cursor-pointer ">
                   {params.row.title}
                 </div>
               )
             }
         },
-        {
-            field: "details",
-            headerName: "Details",
-            width: 250,
-        },
-        {
-            field: "modified",
-            headerName: "Last modified",
-            width: 150,
+        { field: "details", headerName: "Details", width: 250,},
+        { field: "modified", headerName: "Last modified", width: 150,
             renderCell: (params) => {
                 return (
                   <div>
@@ -90,10 +85,7 @@ const Hero = () => {
                 )
             }
         },
-        {
-            field: "created",
-            headerName: "Date created",
-            width: 150,
+        {field: "created", headerName: "Date created", width: 150,
             renderCell: (params) => {
                 return (
                   <div>
@@ -102,25 +94,19 @@ const Hero = () => {
                 )
             }
         },
-        {
-            field: "update",
-            headerName: "Update",
-            width: 150,
+        { field: "update", headerName: "Update", width: 150,
             renderCell: (params) => {
                 return (
-                    <div onClick={ ()=> setUpdateModal(params.row._id,) } className="text-green-700 cursor-pointer ">
+                    <div onClick={ ()=> openUpdate(params.row._id,) } className="text-green-700 cursor-pointer ">
                         <EditOutlinedIcon />
                     </div>
               );
             },
         },
-        {
-            field: "delete",
-            headerName: "Delete",
-            width: 150,
+        { field: "delete", headerName: "Delete", width: 150,
             renderCell: (params) => {
                 return (
-                    <div className=" text-red-400 cursor-pointer ">
+                    <div onClick={()=> deleteNote(params.row._id)} className=" text-red-400 cursor-pointer ">
                         <DeleteOutlineIcon />
                     </div>
                 );
@@ -167,23 +153,23 @@ const Hero = () => {
 
 
                 {
-                    rows.map((row, id) => (
+                    notes.map((note, id) => (
                         <>
-                            {viewModal === row._id ? 
+                            {viewModal === note._id ? 
                                 <Modal 
                                     key={id}
                                     handleClose={handleViewModal}
                                     type="view"
-                                    row={row}
+                                    row={note}
                                 />
                             : null}
 
-                            {updateModal === row._id ? 
+                            {updateModal === note._id ? 
                                 <Modal 
                                     key={id}
                                     handleClose={handleUpdateModal}
                                     type="update"
-                                    row={row}
+                                    row={note}
                                     title={title}
                                     details={details}
                                     titleChange={titleChange}

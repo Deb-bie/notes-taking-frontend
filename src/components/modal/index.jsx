@@ -8,7 +8,6 @@ const Modal = ({handleClose, title, details, titleChange, detailChange, addNote,
         case "add":
             data = {
                 title: "Add a new note",
-                handleClose: handleClose,
                 button: "Add"
             }
         break;
@@ -16,7 +15,6 @@ const Modal = ({handleClose, title, details, titleChange, detailChange, addNote,
         case "update":
             data = {
                 title: "Update Note",
-                handleClose: handleClose,
                 button: "Update"
             };
         break;
@@ -24,7 +22,6 @@ const Modal = ({handleClose, title, details, titleChange, detailChange, addNote,
         case "view":
             data = {
                 title: "View details",
-                handleClose: handleClose
             }      
         break;
         
@@ -38,7 +35,7 @@ const Modal = ({handleClose, title, details, titleChange, detailChange, addNote,
     
     return (
         <div className="w-[100%] h-[100%] flex justify-center items-center fixed inset-0 z-50 outline-none focus:outline-none overflow-auto bg-[#00000059] ">
-            <div className="relative 4xs:w-[90%] sm:w-[60%] h-[80%] top-[30px]  my-2 4xs:mx-2 sm:mx-12 flex  overflow-scroll bg-white pb-[500px] shadow-lg ">
+            <div className="relative 4xs:w-[90%] sm:w-[60%] h-[80%] top-[30px]  my-2 4xs:mx-2 sm:mx-12 flex  overflow-scroll bg-white pb-[10px] shadow-lg ">
                 <div className="border-0 relative flex flex-col w-full h-[100%] outline-none focus:outline-none rounded-[10px]">
                     <div className="w-[100%] h-full flex flex-col justify-start ">
                         <div className="w-[100%] flex flex-row justify-end ">
@@ -106,7 +103,7 @@ const Modal = ({handleClose, title, details, titleChange, detailChange, addNote,
                                                         </textarea>
             
                                                         <div className="w-[100%] h-[100%] mt-6 flex flex-row justifu-center">
-                                                            <button type="submit" onClick={updateNote} className="w-[80%]  bg-black text-white px-4 py-4 mt-12 rounded-[10px] ">
+                                                            <button type="submit" onClick={() => updateNote(row._id)} className="w-[80%]  bg-black text-white px-4 py-4 mt-12 rounded-[10px] ">
                                                                 {data.button}
                                                             </button>
                                                         </div>

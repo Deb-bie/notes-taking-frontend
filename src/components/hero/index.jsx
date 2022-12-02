@@ -28,7 +28,6 @@ const Hero = () => {
 
     const addNote = (e) => {
         e.preventDefault();
-
         axios.post( "http://localhost:3333", 
             {
                 title: title,
@@ -39,15 +38,24 @@ const Hero = () => {
         setDetails("")
     }
 
-    const updateNote = (id) => {
+    const updateNote = (e) => {
         e.preventDefault();
 
-        
+
         console.log(title)
         console.log(details)
         setTitle("");
         setDetails("")
     }
+
+    useEffect(() => {
+        const fetchNotes = async () => {
+          const result = await axios.get("http://localhost:3333");
+          setNotes(result.data);
+        };
+  
+        fetchNotes();
+      }, [notes]);
 
 
 
@@ -74,11 +82,25 @@ const Hero = () => {
             field: "modified",
             headerName: "Last modified",
             width: 150,
+            renderCell: (params) => {
+                return (
+                  <div>
+                    { new  Date(params.row.updatedAt).toDateString() }
+                  </div>
+                )
+            }
         },
         {
             field: "created",
             headerName: "Date created",
             width: 150,
+            renderCell: (params) => {
+                return (
+                  <div>
+                    { new  Date(params.row.createdAt).toDateString() }
+                  </div>
+                )
+            }
         },
         {
             field: "update",
@@ -117,7 +139,7 @@ const Hero = () => {
 
                 <div className="mt-12 w-[100%] h-[80vh] px-12 p-[20px]  ">
                     <DataGrid
-                        rows={rows}
+                        rows={notes}
                         columns={columns}
                         pageSize={9}
                         rowsPerPageOptions={[9]}

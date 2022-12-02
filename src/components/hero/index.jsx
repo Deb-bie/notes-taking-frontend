@@ -60,7 +60,7 @@ const Hero = () => {
     }
 
     const deleteNote = async (id) => {
-        await axios.delete(`https://notes-api-dzsi.onrender.com//${id}`)
+        await axios.delete(`https://notes-api-dzsi.onrender.com/${id}`)
     }
 
 

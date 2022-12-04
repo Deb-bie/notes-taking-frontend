@@ -1,7 +1,7 @@
 import {MdClose} from "react-icons/md"
 
 
-const Modal = ({handleClose, title, details, titleChange, detailChange, addNote, updateNote, type, row}) => {
+const Modal = ({handleClose, title, details, titleChange, detailChange, addNote, updateNote, type, row, error}) => {
     let data;
 
     switch (type) {
@@ -28,14 +28,10 @@ const Modal = ({handleClose, title, details, titleChange, detailChange, addNote,
         default:
         break;
     }
-
-
-
-
     
     return (
         <div className="w-[100%] h-[100%] flex justify-center items-center fixed inset-0 z-50 outline-none focus:outline-none overflow-auto bg-[#00000059] ">
-            <div className="relative 4xs:w-[90%] sm:w-[60%] h-[80%] top-[30px]  my-2 4xs:mx-2 sm:mx-12 flex  overflow-scroll bg-white pb-[10px] shadow-lg ">
+            <div className="relative 4xs:w-[90%] sm:w-[60%] h-[100%]  my-2 4xs:mx-2 sm:mx-12 flex  overflow-scroll bg-white pb-[10px] shadow-lg ">
                 <div className="border-0 relative flex flex-col w-full h-[100%] outline-none focus:outline-none rounded-[10px]">
                     <div className="w-[100%] h-full flex flex-col justify-start ">
                         <div className="w-[100%] flex flex-row justify-end ">
@@ -72,6 +68,12 @@ const Modal = ({handleClose, title, details, titleChange, detailChange, addNote,
                                                             readOnly
                                                             className="w-[80%] p-4 mb-12  border-[1px] outline-none rounded-[10px] ">
                                                         </textarea>
+
+                                                        <label className="text-2xl pb-4 text-sky-700">Last modified</label>
+                                                        <p>{ new  Date(row.updatedAt).toDateString() }</p>
+
+                                                        <label className="text-2xl pb-4 pt-12 text-sky-700 ">Created</label>
+                                                        <p className="text-2xl pb-12" >{ new  Date(row.createdAt).toDateString() }</p>
                                                     </>
                                                 :  ""
                                                 }
@@ -89,10 +91,15 @@ const Modal = ({handleClose, title, details, titleChange, detailChange, addNote,
                                                             onChange={titleChange}
                                                             required
                                                             placeholder={row.title}
-                                                            className="w-[80%] h-[auto] px-4 py-2 rounded-[10px] border-[1px] mb-6 outline-none "
+                                                            className="w-[80%] h-[auto] px-4 py-2 rounded-[10px] border-[1px] outline-none "
                                                         />
+                                                        {
+                                                            error ? 
+                                                                <p className="text-base text-red-600 pb-6 ">{error} </p>
+                                                            : ""
+                                                        }
             
-                                                        <label className="text-2xl pb-4 ">Details</label>
+                                                        <label className="text-2xl py-4 ">Details</label>
                                                         <textarea 
                                                             rows="4" 
                                                             value={details}
@@ -102,8 +109,8 @@ const Modal = ({handleClose, title, details, titleChange, detailChange, addNote,
                                                             className="w-[80%] p-4  border-[1px] outline-none rounded-[10px] ">
                                                         </textarea>
             
-                                                        <div className="w-[100%] h-[100%] mt-6 flex flex-row justifu-center">
-                                                            <button type="submit" onClick={() => updateNote(row._id)} className="w-[80%]  bg-black text-white px-4 py-4 mt-12 rounded-[10px] ">
+                                                        <div className="w-[100%] mt-6 flex flex-row justify-center">
+                                                            <button type="submit" onClick={(e)=>updateNote(e, row._id)} className="w-[80%]  bg-black text-white px-4 py-4 mt-12 rounded-[10px] ">
                                                                 {data.button}
                                                             </button>
                                                         </div>
@@ -121,10 +128,15 @@ const Modal = ({handleClose, title, details, titleChange, detailChange, addNote,
                                                 onChange={titleChange}
                                                 required
                                                 placeholder="eg. Swimming lessons "
-                                                className="w-[90%] h-[auto] px-4 py-2 rounded-[10px] border-[1px] mb-6 outline-none "
+                                                className="w-[90%] h-[auto] px-4 py-2 rounded-[10px] border-[1px] mb-2 outline-none "
                                             />
+                                            {
+                                                error ? 
+                                                <p className="text-base text-red-600 pb-6 ">{error} </p>
+                                                : ""
+                                            }
 
-                                            <label className="text-2xl pb-4 ">Details</label>
+                                            <label className="text-2xl py-4 ">Details</label>
                                             <textarea 
                                                 rows="4" 
                                                 value={details}
@@ -135,7 +147,7 @@ const Modal = ({handleClose, title, details, titleChange, detailChange, addNote,
 
                                             {
                                                 data.button ? 
-                                                    <div className="w-[100%]  mt-6 flex flex-row justifu-center">
+                                                    <div className="w-[100%]  mt-6 flex flex-row justify-center">
                                                         <button type="submit" onClick={addNote} className="w-[90%]  bg-black text-white px-4 py-4 mt-12 rounded-[10px] ">
                                                             {data.button}
                                                         </button>

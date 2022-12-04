@@ -11,11 +11,14 @@ import Modal from  "../modal/"
 
 const Hero = () => {
     const [notes, setNotes] = useState([])
+
     const [title, setTitle] = useState("")
     const [details, setDetails] = useState("")
     const [addModal, setAddModal] = useState(false)
     const [updateModal, setUpdateModal] = useState(null)
     const [viewModal, setViewModal] = useState(null)
+    const [error, setError] = useState("")
+
 
     const titleChange = (e) => {setTitle(e.target.value)}
     const detailChange = (e) => {setDetails(e.target.value)}
@@ -23,46 +26,49 @@ const Hero = () => {
     const handleUpdateModal= () => {setUpdateModal(!updateModal)}
     const handleViewModal= () => {setViewModal(!viewModal)}
 
+    const url = `https://notes-api-dzsi.onrender.com/`;
+
     const addNote = (e) => {
         e.preventDefault();
-        axios.post( "https://notes-api-dzsi.onrender.com/", 
-            { title: title, details: details} 
-        );
-        setTitle("");
-        setDetails("")
+        axios.post( url, { title: title, details: details}).then((res) =>         
+            setTitle(""),
+            setDetails(""),
+            setError("")
+        ).catch((error) => {
+            if(error.response.data.status === 500) setError("This title has been used. Please use a different one")
+        });
+
     }
 
     useEffect(() => {
         const fetchNotes = async () => {
-          const result = await axios.get("https://notes-api-dzsi.onrender.com/");
+          const result = await axios.get(url);
           setNotes(result.data);
         };
         fetchNotes();
-    }, [notes]);
+    }, [notes, url]);
 
-    const openUpdate = async (id) => {
-        setUpdateModal(id)
+    const openUpdate = async (id) => {setUpdateModal(id)}
+
+    const updateNote = async (e, id) => {
+        e.preventDefault();
+        await axios.put(url.concat(`${id}`), { title: title, details: details}).then((res) =>         
+            setTitle(""),
+            setDetails(""),
+            setError(""),  
+        ).catch((error) => {
+            if(error.response.data.status === 500) setError("This title has been used. Please use a different one")
+        })
     }
 
-    const updateNote = async (id) => {
-        axios.put( `https://notes-api-dzsi.onrender.com/${id}`, 
-            { title: title, details: details } 
-        )
-        setTitle("");
-        setDetails("")
-        handleUpdateModal()
-    };
-
-
-    const getOneNote = async (id) => {
-        await axios.get(`https://notes-api-dzsi.onrender.com//${id}`)
+    const getOneNote = async (id) => {  
         setViewModal(id)
+        await axios.get(url.concat(`${id}`))
     }
 
     const deleteNote = async (id) => {
-        await axios.delete(`https://notes-api-dzsi.onrender.com/${id}`)
+        await axios.delete(url.concat(`${id}`))
     }
-
 
     const columns = [
         { field: "_id", headerName: "ID", width: 70},
@@ -97,7 +103,7 @@ const Hero = () => {
         { field: "update", headerName: "Update", width: 150,
             renderCell: (params) => {
                 return (
-                    <div onClick={ ()=> openUpdate(params.row._id,) } className="text-green-700 cursor-pointer ">
+                    <div onClick={ ()=> openUpdate(params.row._id,)} className="text-green-700 cursor-pointer ">
                         <EditOutlinedIcon />
                     </div>
               );
@@ -110,7 +116,7 @@ const Hero = () => {
                         <DeleteOutlineIcon />
                     </div>
                 );
-              },
+            },
         },
     ];
 
@@ -119,19 +125,22 @@ const Hero = () => {
         <div className="w-[100%] h-[97vh] ">
             <div className="w-[100%] h-[100%] text-xl flex flex-col items-center content-center ">
 
-                {/* <div className="w-[100%] h-[80vh] flex flex-col justify-center content-center items-center">
-                    Sorry, you have no available notes.
-                </div> */}
-
-                <div className="mt-12 w-[100%] h-[80vh] px-12 p-[20px]  ">
-                    <DataGrid
-                        rows={notes}
-                        columns={columns}
-                        pageSize={9}
-                        rowsPerPageOptions={[9]}
-                        getRowId={(row) => row._id}
-                    />
-                </div>  
+                {
+                    notes.length > 0 ? 
+                        <div className="mt-12 w-[100%] h-[80vh] px-12 p-[20px]  ">
+                            <DataGrid
+                                rows={notes}
+                                columns={columns}
+                                pageSize={9}
+                                rowsPerPageOptions={[9]}
+                                getRowId={(row) => row._id}
+                            />
+                        </div>  
+                    : 
+                        <div className="w-[100%] h-[80vh] flex flex-col justify-center content-center items-center">
+                            Sorry, you have no available notes.
+                        </div>
+                }
 
                 <div className="fixed bottom-20 right-12  z-80">
                     <Fab onClick={() => handleAddModal()} color="primary" aria-label="add" >
@@ -144,13 +153,13 @@ const Hero = () => {
                         type="add"
                         handleClose={handleAddModal}
                         addNote={addNote}
+                        error={error}
                         title={title}
                         details={details}
                         titleChange={titleChange}
                         detailChange={detailChange}
                     />
                 : null}
-
 
                 {
                     notes.map((note, id) => (
@@ -170,6 +179,7 @@ const Hero = () => {
                                     handleClose={handleUpdateModal}
                                     type="update"
                                     row={note}
+                                    error={error}
                                     title={title}
                                     details={details}
                                     titleChange={titleChange}
@@ -180,7 +190,6 @@ const Hero = () => {
                         </>
                     ))
                 }
-
             </div>
         </div>
     )

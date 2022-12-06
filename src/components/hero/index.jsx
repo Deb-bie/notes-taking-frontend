@@ -10,8 +10,11 @@ import Modal from  "../modal/"
 
 
 const Hero = () => {
-    const [notes, setNotes] = useState([])
 
+    const url = `https://notes-api-dzsi.onrender.com/`;
+    var timer;
+
+    const [notes, setNotes] = useState([])
     const [title, setTitle] = useState("")
     const [details, setDetails] = useState("")
     const [addModal, setAddModal] = useState(false)
@@ -19,14 +22,41 @@ const Hero = () => {
     const [viewModal, setViewModal] = useState(null)
     const [error, setError] = useState("")
 
-
     const titleChange = (e) => {setTitle(e.target.value)}
     const detailChange = (e) => {setDetails(e.target.value)}
     const handleAddModal = () => {setAddModal(!addModal)}
     const handleUpdateModal= () => {setUpdateModal(!updateModal)}
     const handleViewModal= () => {setViewModal(!viewModal)}
+    const openUpdate = async (id) => {setUpdateModal(id)}
 
-    const url = `https://notes-api-dzsi.onrender.com/`;
+    useEffect(() => {
+        timer = null
+    }, [])
+
+    const updateTitle = async (e, id) => {
+        e.preventDefault()
+        clearTimeout(timer)
+        setTitle(e.target.value)
+        timer = setTimeout(() => {
+            setTitle(e.target.value)
+            axios.patch(url.concat(`${id}`), { title: e.target.value}).then((res) =>         
+            setError(""),  
+        ).catch((error) => {
+            if(error.response.data.status === 500) setError("This title has been used. Please use a different one")
+        })
+        }, 600)
+    }
+
+    const updateDetails = async (e, id) => {
+        e.preventDefault()
+        clearTimeout(timer)
+        setDetails(e.target.value)
+        timer = setTimeout(() => {
+            setDetails(e.target.value)
+            axios.patch(url.concat(`${id}`), { details: e.target.value})         
+        }, 600)
+    }
+
 
     const addNote = (e) => {
         e.preventDefault();
@@ -48,11 +78,10 @@ const Hero = () => {
         fetchNotes();
     }, [notes, url]);
 
-    const openUpdate = async (id) => {setUpdateModal(id)}
 
     const updateNote = async (e, id) => {
         e.preventDefault();
-        await axios.put(url.concat(`${id}`), { title: title, details: details}).then((res) =>         
+        await axios.put(url.concat(`${id}`), { title: title , details: details}).then((res) =>         
             setTitle(""),
             setDetails(""),
             setError(""),  
@@ -185,6 +214,8 @@ const Hero = () => {
                                     titleChange={titleChange}
                                     detailChange={detailChange}
                                     updateNote={updateNote}
+                                    updateTitle={updateTitle}
+                                    updateDetails={updateDetails}
                                 />
                             : null}
                         </>

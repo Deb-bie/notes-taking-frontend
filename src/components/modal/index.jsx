@@ -1,7 +1,7 @@
 import {MdClose} from "react-icons/md"
 
 
-const Modal = ({handleClose, title, details, titleChange, detailChange, addNote, updateNote, type, row, error}) => {
+const Modal = ({handleClose, title, details, titleChange, detailChange, addNote, updateNote, type, row, error, updateTitle, updateDetails}) => {
     let data;
 
     switch (type) {
@@ -80,17 +80,16 @@ const Modal = ({handleClose, title, details, titleChange, detailChange, addNote,
 
                                                 {
                                                     type ==='update' ?
-
-
                                                     <>
                                                         <label className="text-2xl pb-4 ">Title</label>
                                                         <input 
                                                             type="text" 
                                                             value={title}
                                                             name="title"
-                                                            onChange={titleChange}
+                                                            onChange={(e) => updateTitle(e, row._id)}
                                                             required
                                                             placeholder={row.title}
+                                
                                                             className="w-[80%] h-[auto] px-4 py-2 rounded-[10px] border-[1px] outline-none "
                                                         />
                                                         {
@@ -105,7 +104,7 @@ const Modal = ({handleClose, title, details, titleChange, detailChange, addNote,
                                                             value={details}
                                                             placeholder={row.details}
                                                             name="details"
-                                                            onChange={detailChange}
+                                                            onChange={(e) => updateDetails(e, row._id)}
                                                             className="w-[80%] p-4  border-[1px] outline-none rounded-[10px] ">
                                                         </textarea>
             
